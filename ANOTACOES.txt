@@ -1,0 +1,11 @@
+Quando adicionar novo módulo e tela:
+
+Arrumar Scope na Program;
+
+Lista dos Módulos no Serializable;
+
+Carregar lista dos Módulos no Serializable;
+
+Colocar link da lista dos Módulos em _Layout.cshtml;
+
+Colocar link da lista dos Módulos em Index.cshtml;
