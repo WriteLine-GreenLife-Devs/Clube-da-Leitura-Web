@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ClubeDaLeituraWeb.WebApp.ModuloRevista.Dominio
+namespace ClubeDaLeitura.WebApplication.ModuloRevista.Dominio
 {
     public enum StatusRevista
     {
@@ -36,11 +36,6 @@ namespace ClubeDaLeituraWeb.WebApp.ModuloRevista.Dominio
                 erros.Add("A revista deve estar vinculada a uma caixa.");
 
             return erros;
-        }
-
-        public override string ToString()
-        {
-            return $"{Titulo} - Edição {NumeroEdicao} ({AnoPublicacao}) - Status: {Status}";
         }
     }
 }
