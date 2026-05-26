@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ClubeDaLeitura.WebApplication.Compartilhado.Dominio;
 
 namespace ClubeDaLeitura.WebApplication.ModuloRevista.Dominio;
 
@@ -10,7 +11,7 @@ public enum StatusRevista
     Reservada
 }
 
-public sealed class Revista
+public sealed class Revista : EntidadeBase<Revista>
 {
     public int Id { get; set; }
     public string Titulo { get; set; }
@@ -22,7 +23,12 @@ public sealed class Revista
 
     public StatusRevista Status { get; set; } = StatusRevista.Disponivel;
 
-    public List<string> Validar()
+    public override void AtualizarDados(Revista entidadeAtualizada)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override List<string> Validar()
     {
         var erros = new List<string>();
 
