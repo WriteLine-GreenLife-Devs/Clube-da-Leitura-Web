@@ -13,19 +13,29 @@ public enum StatusRevista
 
 public sealed class Revista : EntidadeBase<Revista>
 {
-    public int Id { get; set; }
+    public string Id { get; set; }
     public string Titulo { get; set; }
     public int NumeroEdicao { get; set; }
     public int AnoPublicacao { get; set; }
-
-    // vínculo obrigatório com Caixa
-    public int CaixaId { get; set; }
+    public string CaixaId { get; set; }
 
     public StatusRevista Status { get; set; } = StatusRevista.Disponivel;
 
+    public Revista(string titulo, int numeroEdicao, int anoPublicacao, string caixaId)
+    {
+        Titulo = titulo;
+        NumeroEdicao = numeroEdicao;
+        AnoPublicacao = anoPublicacao;
+        CaixaId = caixaId;
+    }
+
     public override void AtualizarDados(Revista entidadeAtualizada)
     {
-        throw new NotImplementedException();
+        Titulo = entidadeAtualizada.Titulo;
+        NumeroEdicao = entidadeAtualizada.NumeroEdicao;
+        AnoPublicacao = entidadeAtualizada.AnoPublicacao;
+        CaixaId = entidadeAtualizada.CaixaId;
+        Status = entidadeAtualizada.Status;
     }
 
     public override List<string> Validar()
@@ -41,7 +51,7 @@ public sealed class Revista : EntidadeBase<Revista>
         if (AnoPublicacao < 1900 || AnoPublicacao > DateTime.Now.Year)
             erros.Add("Ano de publicação inválido.");
 
-        if (CaixaId <= 0)
+        if (string.IsNullOrWhiteSpace(CaixaId))
             erros.Add("A revista deve estar vinculada a uma caixa.");
 
         return erros;
