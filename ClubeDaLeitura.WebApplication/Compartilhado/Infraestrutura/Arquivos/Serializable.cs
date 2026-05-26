@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using ClubeDaLeitura.WebApplication.ModuloAmigo.Dominio;
 using ClubeDaLeitura.WebApplication.ModuloCaixa.Dominio;
 
 namespace ClubeDaLeitura.WebApplication.Compartilhado.Infraestrutura.Arquivos;
@@ -8,6 +9,7 @@ public sealed class Serializable
 {
     #region Listas dos Modulos
     public List<Caixa> Caixas { get; set; } = new List<Caixa>();
+    public List<Amigo> Amigos { get; set; } = new List<Amigo>();
     
     #endregion
     private readonly string caminhoArquivo;
@@ -56,6 +58,7 @@ public sealed class Serializable
         #region Carregar Listas dos Modulos
         
         Caixas = arquivoSalvo.Caixas;
+        Amigos = arquivoSalvo.Amigos;
 
         #endregion
     }
