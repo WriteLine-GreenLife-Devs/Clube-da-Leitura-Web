@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace ClubeDaLeitura.WebApplication.ModuloRevista.Infraestrutura;
 
-public sealed class RepositorioRevista : RepositorioBase<Revista>
+public sealed class RepositorioRevista : RepositorioBase<Revista>, InterfaceRepositorioRevista
 {
     public RepositorioRevista(Serializable serializable) : base(serializable) { }
 
