@@ -1,0 +1,32 @@
+@{
+    Layout = "_Layout";
+    ViewBag.Titulo = "Página Inicial";
+}
+
+<div class="row">
+    <div class="col-lg-7">
+        <h1 class="display-5 fw-semibold mb-3">Clube da Leitura</h1>
+        <p class="lead text-secondary mb-4">
+            Organize caixas, revistas, empréstimos e amigos em uma aplicação simples para acompanhar a rotina do clube.
+        </p>
+
+        <a class="btn btn-primary rounded-pill px-4" asp-controller="Caixa" asp-action="Listar">Acessar Caixas</a>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card border-primary-subtle shadow-sm">
+            <div class="card-body p-4">
+                <h3 class="h5 text-primary mb-3">Módulos disponíveis</h3>
+
+                <div class="list-group">
+                    @* #Region: Colocar Links da lista dos Módulos *@
+                    @* Exemplo: <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" asp-controller="Caixa" asp-action="Listar">
+                        Controle de Caixas
+                        <span class="badge text-bg-primary rounded-pill">Abrir</span>
+                    </a>*@
+                    @* #EndRegion *@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
