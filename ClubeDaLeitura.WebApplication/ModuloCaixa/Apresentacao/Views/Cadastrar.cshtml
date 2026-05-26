@@ -8,19 +8,19 @@
 <form class="card border-primary-subtle shadow-sm mx-auto p-4" style="max-width: 620px;"  asp-action="Cadastrar" method="post">
     
     <div class="mb-3">
-        <label asp-for="Etiqueta" class="form-label fw-semibold text-primary text-uppercase small">Etiqueta <span class="text-muted">(Ex: Caixa Azul)</span></label>
+        <label asp-for="Etiqueta" class="form-label fw-semibold text-primary text-uppercase small">Etiqueta <span class="text-muted"></span></label>
         <input asp-for="Etiqueta" type="text" class="form-control" placeholder="Ex: Caixa Azul">
         <span asp-validation-for="Etiqueta" class="text-danger small fw-semibold"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="Cor" class="form-label fw-semibold text-primary text-uppercase small">Cor <span class="text-muted">(Ex: Azul)</span></label>
+        <label asp-for="Cor" class="form-label fw-semibold text-primary text-uppercase small">Cor <span class="text-muted"></span></label>
         <input asp-for="Cor" type="text" class="form-control" placeholder="Ex: Azul">
         <span asp-validation-for="Cor" class="text-danger small fw-semibold"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="DiasDeEmprestimo" class="form-label fw-semibold text-primary text-uppercase small">Dias de Empréstimo <span class="text-muted">(Ex: 7)</span></label>
+        <label asp-for="DiasDeEmprestimo" class="form-label fw-semibold text-primary text-uppercase small">Dias de Empréstimo <span class="text-muted"></span></label>
         <input asp-for="DiasDeEmprestimo" type="number" min="1" class="form-control" placeholder="Ex: 7">
         <span asp-validation-for="DiasDeEmprestimo" class="text-danger small fw-semibold"></span>
     </div>
