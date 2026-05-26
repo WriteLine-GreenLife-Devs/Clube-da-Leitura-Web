@@ -23,7 +23,7 @@ public sealed class Amigo : EntidadeBase<Amigo>
         Telefone = entidadeAtualizada.Telefone;
     }
 
-    public string ValidarTelefone(string telefone)
+    public bool ValidarTelefone(string telefone)
     {
         string apenasNumeros = System.Text.RegularExpressions.Regex.Replace(telefone ?? "", @"[^\d]", "");
 
@@ -31,15 +31,17 @@ public sealed class Amigo : EntidadeBase<Amigo>
 
         if (tamanho == 10)
         {
-            return long.Parse(apenasNumeros).ToString(@"(00) 0000-0000");
+            Telefone = long.Parse(apenasNumeros).ToString(@"(00) 0000-0000");
+            return true;
         }
         else if (tamanho == 11)
         {
-            return long.Parse(apenasNumeros).ToString(@"(00) 0 0000-0000");
+            Telefone = long.Parse(apenasNumeros).ToString(@"(00) 0 0000-0000");
+            return true;
         }
         else
         {
-            return "";
+            return false;
         }
     }
 
@@ -62,7 +64,7 @@ public sealed class Amigo : EntidadeBase<Amigo>
          if (NomeResponsavel.Length < 2 || NomeResponsavel.Length > 100)
             erros.Add("O campo \"Nome do Responsável\" deve conter entre 2 e 100 caracteres.");
 
-        if (ValidarTelefone(Telefone) == "")
+        if (ValidarTelefone(Telefone) == false)
             erros.Add("O campo \"Telefone\" deve conter entre 10 e 15 caracteres.");
 
         return erros;

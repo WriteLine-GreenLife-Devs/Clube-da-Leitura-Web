@@ -59,6 +59,18 @@ public class AmigoController : Controller
             cadastrarVm.Telefone
         );
 
+        List<string> erros = novoAmigo.Validar();
+
+        if (erros.Any())
+        {
+            foreach (string erro in erros)
+            {
+                ModelState.AddModelError(string.Empty, erro);
+            }
+
+            return View(cadastrarVm);
+        }
+
         repositorioAmigo.Cadastrar(novoAmigo);
 
         return RedirectToAction(nameof(Listar));
@@ -94,6 +106,18 @@ public class AmigoController : Controller
             editarVm.NomeResponsavel,
             editarVm.Telefone
         );
+
+        List<string> erros = amigoAtualizado.Validar();
+
+        if (erros.Any())
+        {
+            foreach (string erro in erros)
+            {
+                ModelState.AddModelError(string.Empty, erro);
+            }
+
+            return View(editarVm);
+        }
 
         repositorioAmigo.Editar(editarVm.Id, amigoAtualizado);
 
