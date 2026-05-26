@@ -1,18 +1,16 @@
-using ClubeDaLeitura.WebApplication.Compartilhado;
+using ClubeDaLeitura.WebApplication.Compartilhado.Infraestrutura.Arquivos;
 using ClubeDaLeitura.WebApplication.ModuloRevista.Dominio;
-using System.Collections.Generic;
 
-namespace ClubeDaLeitura.WebApplication.ModuloRevista.Infraestrutura
+namespace ClubeDaLeitura.WebApplication.ModuloRevista.Infraestrutura;
+
+public class RepositorioRevista : RepositorioBase<Revista>
 {
-    public class RepositorioRevista : RepositorioBase<Revista>
+    public RepositorioRevista(Serializable serializable) : base(serializable)
     {
-        public RepositorioRevista(ContextoDados contexto) : base(contexto)
-        {
-        }
+    }
 
-        protected override List<Revista> ObterRegistros()
-        {
-            return contexto.Revistas;
-        }
+    protected override List<Revista> ObterRegistros()
+    {
+        return serializable.Revistas;
     }
 }
