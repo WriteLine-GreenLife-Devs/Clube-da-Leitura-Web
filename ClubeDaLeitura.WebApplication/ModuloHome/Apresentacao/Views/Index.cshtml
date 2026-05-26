@@ -10,7 +10,13 @@
             Organize caixas, revistas, empréstimos e amigos em uma aplicação simples para acompanhar a rotina do clube.
         </p>
 
+        @* #Region: Colocar Links da lista dos Módulos *@
+
         <a class="btn btn-primary rounded-pill px-4" asp-controller="Caixa" asp-action="Listar">Acessar Caixas</a>
+        <a class="btn btn-primary rounded-pill px-4" asp-controller="Amigo" asp-action="Listar">Acessar Amigos</a>
+        
+        @* #EndRegion *@
+
     </div>
 
     <div class="col-lg-5">
@@ -32,6 +38,7 @@
                     </a>
                     
                     @* #EndRegion *@
+                    
                 </div>
             </div>
         </div>
