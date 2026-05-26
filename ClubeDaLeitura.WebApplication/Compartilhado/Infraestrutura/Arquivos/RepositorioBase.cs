@@ -2,12 +2,12 @@ using ClubeDaLeitura.WebApplication.Compartilhado.Dominio;
 
 namespace ClubeDaLeitura.WebApplication.Compartilhado.Infraestrutura.Arquivos;
 
-public abstract class RepositorioBaseEmArquivo<T> where T : EntidadeBase<T>
+public abstract class RepositorioBase<T> where T : EntidadeBase<T>
 {
     protected Serializable serializable;
     protected List<T> arquivos;
 
-    public RepositorioBaseEmArquivo(Serializable serializable)
+    public RepositorioBase(Serializable serializable)
     {
         this.serializable = serializable;
         this.arquivos = CarregarArquivos();
