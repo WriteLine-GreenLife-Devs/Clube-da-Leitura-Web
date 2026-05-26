@@ -1,12 +1,14 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using ClubeDaLeitura.WebApplication.ModuloCaixa.Dominio;
 
 namespace ClubeDaLeitura.WebApplication.Compartilhado.Infraestrutura.Arquivos;
 
 public sealed class Serializable
 {
     #region Listas dos Modulos
-    //Exemplo: public List<Caixa> Caixas { get; set; } = new List<Caixa>();
+    public List<Caixa> Caixas { get; set; } = new List<Caixa>();
+    
     #endregion
     private readonly string caminhoArquivo;
 
@@ -52,7 +54,9 @@ public sealed class Serializable
             return;
 
         #region Carregar Listas dos Modulos
-        // Exemplo: Caixas = arquivoSalvo.Caixas;
+        
+        Caixas = arquivoSalvo.Caixas;
+
         #endregion
     }
 }
