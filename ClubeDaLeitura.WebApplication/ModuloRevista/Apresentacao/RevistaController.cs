@@ -1,7 +1,7 @@
 using ClubeDaLeitura.WebApplication.ModuloRevista.Dominio;
 using ClubeDaLeitura.WebApplication.ModuloCaixa.Dominio;
-using ClubeDaLeituraWeb.WebApp.ModuloRevista.Apresentacao;
 using Microsoft.AspNetCore.Mvc;
+using ClubeDaLeituraWeb.WebApp.ModuloRevista.Apresentacao;
 
 namespace ClubeDaLeitura.WebApplication.ModuloRevista.Apresentacao;
 
@@ -119,7 +119,12 @@ public class RevistaController : Controller
         if (!ModelState.IsValid)
             return View(editarVm);
 
-        Revista revistaAtualizada = new(
+        Revista? revista = repositorioRevista.SelecionarPorId(editarVm.Id);
+
+        if (revista == null)
+            return RedirectToAction(nameof(Listar));
+
+        Revista revistaAtualizada = new Revista(
             editarVm.Titulo,
             editarVm.NumeroEdicao,
             editarVm.AnoPublicacao,
@@ -140,6 +145,7 @@ public class RevistaController : Controller
                 ModelState.AddModelError(string.Empty, erro);
 
             ViewBag.Caixas = repositorioCaixa.SelecionarTodos();
+            ViewBag.Titulo = "Editar Revista";
             return View(editarVm);
         }
 

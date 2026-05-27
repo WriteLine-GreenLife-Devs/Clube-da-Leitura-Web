@@ -47,7 +47,7 @@ public sealed class Revista : EntidadeBase<Revista>
         if (NumeroEdicao <= 0)
             erros.Add("O número da edição deve ser positivo.");
 
-        if (AnoPublicacao < new DateTime(1, 1, 1900) || AnoPublicacao > DateTime.Now)
+        if (AnoPublicacao < new DateTime(1900, 1, 1) || AnoPublicacao > DateTime.Now)
             erros.Add("Data de publicação inválida.");
 
         if (string.IsNullOrWhiteSpace(CaixaId))
