@@ -5,50 +5,45 @@
     ViewBag.Titulo = "Listagem de Revistas";
 }
 
-<p>
-    <a asp-action="Cadastrar" class="btn btn-outline-primary rounded-pill px-4">
-        Cadastrar Nova Revista
-    </a>
-</p>
+<a class="btn-cadastrar-novo" asp-action="Cadastrar">Cadastrar Novo</a>
 
 @if (!Model.Any())
 {
-    <div class="alert alert-info border-primary-subtle shadow-sm">
+    <div class="alert alert-primary border-start border-primary border-2 rounded-3" role="alert">
         Nenhuma revista cadastrada.
     </div>
 }
 else
 {
-    <table class="table table-striped shadow-sm">
-        <thead class="table-primary">
-            <tr>
-                <th>Título</th>
-                <th>Número da Edição</th>
-                <th>Ano de Publicação</th>
-                <th>Caixa</th>
-                <th>Status</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var revista in Model)
-            {
+    <div class="table-responsive">
+        <table class="registros">
+            <thead>
                 <tr>
-                    <td>@revista.Titulo</td>
-                    <td>@revista.NumeroEdicao</td>
-                    <td>@revista.AnoPublicacao.Year</td>
-                    <td>@revista.CaixaId</td>
-                    <td>@revista.Status</td>
-                    <td>
-                        <div class="d-flex gap-2">
-                            <a class="btn btn-outline-primary btn-sm rounded-pill px-3" asp-action="Editar"
-                               asp-route-id="@revista.Id">Editar</a>
-                            <a class="btn btn-outline-primary btn-sm rounded-pill px-3" asp-action="Excluir"
-                               asp-route-id="@revista.Id">Excluir</a>
-                        </div>
-                    </td>
+                    <th>Título</th>
+                    <th>Número da Edição</th>
+                    <th>Ano de Publicação</th>
+                    <th>Caixa</th>
+                    <th>Status</th>
+                    <th>Ações</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            
+            <tbody>
+                @foreach (ListarRevistasViewModel revista in Model)
+                {
+                    <tr>
+                        <td>@revista.Titulo</td>
+                        <td>@revista.NumeroEdicao</td>
+                        <td>@revista.AnoPublicacao.Year</td>
+                        <td>@revista.CaixaId</td>
+                        <td>@revista.Status</td>
+                        <td>
+                            <a asp-action="Editar" asp-route-id="@revista.Id">Editar</a>
+                            <a asp-action="Excluir" asp-route-id="@revista.Id">Excluir</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }

@@ -1,6 +1,5 @@
-using ClubeDaLeitura.WebApplication.ModuloCaixa.Dominio;
-using ClubeDaLeitura.WebApplication.ModuloCaixa.Infraestrutura;
 using ClubeDaLeitura.WebApplication.ModuloRevista.Dominio;
+using ClubeDaLeitura.WebApplication.ModuloCaixa.Dominio;
 using ClubeDaLeituraWeb.WebApp.ModuloRevista.Apresentacao;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,20 +21,22 @@ public class RevistaController : Controller
     {
         List<Revista> revistas = repositorioRevista.SelecionarTodos();
 
-        List<ListarRevistasViewModel> listarVms = new List<ListarRevistasViewModel>();
+        List<ListarRevistasViewModel> listarVms = new();
 
         foreach (Revista r in revistas)
         {
-            ListarRevistasViewModel viewModel = new ListarRevistasViewModel(
+            Caixa? caixa = repositorioCaixa.SelecionarPorId(r.CaixaId);
+
+            ListarRevistasViewModel vm = new ListarRevistasViewModel(
                 r.Id,
                 r.Titulo,
                 r.NumeroEdicao,
                 r.AnoPublicacao,
-                r.CaixaId,
+                caixa?.Etiqueta ?? "Sem Caixa",
                 r.Status.ToString()
             );
 
-            listarVms.Add(viewModel);
+            listarVms.Add(vm);
         }
 
         return View(listarVms);
@@ -44,10 +45,9 @@ public class RevistaController : Controller
     [HttpGet]
     public ActionResult Cadastrar()
     {
-        var caixas = repositorioCaixa.SelecionarTodos();
-        ViewBag.Caixas = caixas;
+        ViewBag.Caixas = repositorioCaixa.SelecionarTodos();
 
-        var cadastrarVm = new CadastrarRevistaViewModel(
+        CadastrarRevistaViewModel cadastrarVm = new(
             string.Empty,
             0,
             DateTime.Now,
@@ -63,24 +63,29 @@ public class RevistaController : Controller
         if (!ModelState.IsValid)
             return View(cadastrarVm);
 
-        bool tituloDuplicado = repositorioRevista
-        .SelecionarTodos()
-        .Any(r => r.Titulo.Equals(cadastrarVm.Titulo, StringComparison.OrdinalIgnoreCase));
-
-        if (tituloDuplicado)
-        {
-            ModelState.AddModelError("Titulo", "Já existe uma revista com este título.");
-            var caixas = repositorioCaixa.SelecionarTodos();
-            ViewBag.Caixas = caixas;
-            return View(cadastrarVm);
-        }
-
-        Revista novaRevista = new Revista(
+        Revista novaRevista = new(
             cadastrarVm.Titulo,
             cadastrarVm.NumeroEdicao,
             cadastrarVm.AnoPublicacao,
             cadastrarVm.CaixaId
         );
+
+        List<string> erros = novaRevista.Validar();
+
+        if (repositorioRevista.SelecionarTodos()
+            .Any(r => r.Titulo == cadastrarVm.Titulo && r.NumeroEdicao == cadastrarVm.NumeroEdicao))
+        {
+            erros.Add("Já existe uma revista com este título e edição.");
+        }
+
+        if (erros.Any())
+        {
+            foreach (string erro in erros)
+                ModelState.AddModelError(string.Empty, erro);
+
+            ViewBag.Caixas = repositorioCaixa.SelecionarTodos();
+            return View(cadastrarVm);
+        }
 
         repositorioRevista.Cadastrar(novaRevista);
 
@@ -95,10 +100,9 @@ public class RevistaController : Controller
         if (revista == null)
             return RedirectToAction(nameof(Listar));
 
-        var caixas = repositorioCaixa.SelecionarTodos();
-        ViewBag.Caixas = caixas;
+        ViewBag.Caixas = repositorioCaixa.SelecionarTodos();
 
-        var editarVm = new EditarRevistaViewModel(
+        EditarRevistaViewModel editarVm = new(
             id,
             revista.Titulo,
             revista.NumeroEdicao,
@@ -115,18 +119,34 @@ public class RevistaController : Controller
         if (!ModelState.IsValid)
             return View(editarVm);
 
-        Revista revistaAtualizada = new Revista(
+        Revista revistaAtualizada = new(
             editarVm.Titulo,
             editarVm.NumeroEdicao,
             editarVm.AnoPublicacao,
             editarVm.CaixaId
         );
 
+        List<string> erros = revistaAtualizada.Validar();
+
+        if (repositorioRevista.SelecionarTodos()
+            .Any(r => r.Titulo == editarVm.Titulo && r.NumeroEdicao == editarVm.NumeroEdicao && r.Id != editarVm.Id))
+        {
+            erros.Add("Já existe uma revista com este título e edição.");
+        }
+
+        if (erros.Any())
+        {
+            foreach (string erro in erros)
+                ModelState.AddModelError(string.Empty, erro);
+
+            ViewBag.Caixas = repositorioCaixa.SelecionarTodos();
+            return View(editarVm);
+        }
+
         repositorioRevista.Editar(editarVm.Id, revistaAtualizada);
 
         return RedirectToAction(nameof(Listar));
     }
-
 
     [HttpGet]
     public ActionResult Excluir(string id)
@@ -136,7 +156,7 @@ public class RevistaController : Controller
         if (revista == null)
             return RedirectToAction(nameof(Listar));
 
-        ExcluirRevistaViewModel excluirVm = new ExcluirRevistaViewModel(
+        ExcluirRevistaViewModel excluirVm = new(
             id,
             revista.Titulo,
             revista.NumeroEdicao,
