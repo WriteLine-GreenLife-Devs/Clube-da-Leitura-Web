@@ -1,0 +1,54 @@
+@model List<ListarRevistasViewModel>
+
+@{
+    Layout = "_Layout";
+    ViewBag.Titulo = "Listagem de Revistas";
+}
+
+<p>
+    <a asp-action="Cadastrar" class="btn btn-outline-primary rounded-pill px-4">
+        Cadastrar Nova Revista
+    </a>
+</p>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info border-primary-subtle shadow-sm">
+        Nenhuma revista cadastrada.
+    </div>
+}
+else
+{
+    <table class="table table-striped shadow-sm">
+        <thead class="table-primary">
+            <tr>
+                <th>Título</th>
+                <th>Número da Edição</th>
+                <th>Ano de Publicação</th>
+                <th>Caixa</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var revista in Model)
+            {
+                <tr>
+                    <td>@revista.Titulo</td>
+                    <td>@revista.NumeroEdicao</td>
+                    <td>@revista.AnoPublicacao.Year</td>
+                    <td>@revista.CaixaId</td>
+                    <td>@revista.Status</td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <a class="btn btn-outline-primary btn-sm rounded-pill px-3" asp-action="Editar"
+                               asp-route-id="@revista.Id">Editar</a>
+                            <a class="btn btn-outline-primary btn-sm rounded-pill px-3" asp-action="Excluir"
+                               asp-route-id="@revista.Id">Excluir</a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

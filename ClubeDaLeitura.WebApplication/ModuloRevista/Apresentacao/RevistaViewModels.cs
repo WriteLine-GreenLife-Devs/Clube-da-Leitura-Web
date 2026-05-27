@@ -6,7 +6,7 @@ public record ListarRevistasViewModel(
     string Id,
     string Titulo,
     int NumeroEdicao,
-    int AnoPublicacao,
+    DateTime AnoPublicacao,
     string CaixaId,
     string Status
 );
@@ -19,8 +19,8 @@ public record CadastrarRevistaViewModel(
     [Range(1, int.MaxValue, ErrorMessage = "O campo \"Número da Edição\" deve conter um valor maior que 0.")]
     int NumeroEdicao,
 
-    [Range(1900, 2100, ErrorMessage = "O campo \"Ano de Publicação\" deve estar entre 1900 e 2100.")]
-    int AnoPublicacao,
+    [Required(ErrorMessage = "O campo \"Ano de Publicação\" deve ser preenchido.")]
+    DateTime AnoPublicacao,
 
     [Required(ErrorMessage = "O campo \"Caixa\" deve ser preenchido.")]
     string CaixaId
@@ -37,7 +37,7 @@ public record EditarRevistaViewModel(
     int NumeroEdicao,
 
     [Range(1900, 2100, ErrorMessage = "O campo \"Ano de Publicação\" deve estar entre 1900 e 2100.")]
-    int AnoPublicacao,
+    DateTime AnoPublicacao,
 
     [Required(ErrorMessage = "O campo \"Caixa\" deve ser preenchido.")]
     string CaixaId
@@ -47,6 +47,6 @@ public record ExcluirRevistaViewModel(
     string Id,
     string Titulo,
     int NumeroEdicao,
-    int AnoPublicacao,
+    DateTime AnoPublicacao,
     string CaixaId
 );

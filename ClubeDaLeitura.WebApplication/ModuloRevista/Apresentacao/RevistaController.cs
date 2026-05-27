@@ -1,3 +1,5 @@
+using ClubeDaLeitura.WebApplication.ModuloCaixa.Dominio;
+using ClubeDaLeitura.WebApplication.ModuloCaixa.Infraestrutura;
 using ClubeDaLeitura.WebApplication.ModuloRevista.Dominio;
 using ClubeDaLeituraWeb.WebApp.ModuloRevista.Apresentacao;
 using Microsoft.AspNetCore.Mvc;
@@ -7,10 +9,12 @@ namespace ClubeDaLeitura.WebApplication.ModuloRevista.Apresentacao;
 public class RevistaController : Controller
 {
     private readonly InterfaceRepositorioRevista repositorioRevista;
+    private readonly InterfaceRepositorioCaixa repositorioCaixa;
 
-    public RevistaController(InterfaceRepositorioRevista repositorioRevista)
+    public RevistaController(InterfaceRepositorioRevista repositorioRevista, InterfaceRepositorioCaixa repositorioCaixa)
     {
         this.repositorioRevista = repositorioRevista;
+        this.repositorioCaixa = repositorioCaixa;
     }
 
     [HttpGet]
@@ -40,10 +44,13 @@ public class RevistaController : Controller
     [HttpGet]
     public ActionResult Cadastrar()
     {
-        CadastrarRevistaViewModel cadastrarVm = new CadastrarRevistaViewModel(
+        var caixas = repositorioCaixa.SelecionarTodos();
+        ViewBag.Caixas = caixas;
+
+        var cadastrarVm = new CadastrarRevistaViewModel(
             string.Empty,
             0,
-            DateTime.Now.Year,
+            DateTime.Now,
             string.Empty
         );
 
@@ -55,6 +62,18 @@ public class RevistaController : Controller
     {
         if (!ModelState.IsValid)
             return View(cadastrarVm);
+
+        bool tituloDuplicado = repositorioRevista
+        .SelecionarTodos()
+        .Any(r => r.Titulo.Equals(cadastrarVm.Titulo, StringComparison.OrdinalIgnoreCase));
+
+        if (tituloDuplicado)
+        {
+            ModelState.AddModelError("Titulo", "Já existe uma revista com este título.");
+            var caixas = repositorioCaixa.SelecionarTodos();
+            ViewBag.Caixas = caixas;
+            return View(cadastrarVm);
+        }
 
         Revista novaRevista = new Revista(
             cadastrarVm.Titulo,
@@ -76,7 +95,10 @@ public class RevistaController : Controller
         if (revista == null)
             return RedirectToAction(nameof(Listar));
 
-        EditarRevistaViewModel editarVm = new EditarRevistaViewModel(
+        var caixas = repositorioCaixa.SelecionarTodos();
+        ViewBag.Caixas = caixas;
+
+        var editarVm = new EditarRevistaViewModel(
             id,
             revista.Titulo,
             revista.NumeroEdicao,
@@ -104,6 +126,7 @@ public class RevistaController : Controller
 
         return RedirectToAction(nameof(Listar));
     }
+
 
     [HttpGet]
     public ActionResult Excluir(string id)

@@ -1,6 +1,8 @@
 using ClubeDaLeitura.WebApplication.Compartilhado.Infraestrutura.Arquivos;
 using ClubeDaLeitura.WebApplication.ModuloCaixa.Dominio;
 using ClubeDaLeitura.WebApplication.ModuloCaixa.Infraestrutura;
+using ClubeDaLeitura.WebApplication.ModuloRevista.Dominio;
+using ClubeDaLeitura.WebApplication.ModuloRevista.Infraestrutura;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,7 @@ builder.Services.AddScoped(provider =>
 
 #region Scopes dos Repositórios
 builder.Services.AddScoped<InterfaceRepositorioCaixa, RepositorioCaixa>();
+builder.Services.AddScoped<InterfaceRepositorioRevista, RepositorioRevista>();
 #endregion
 
 builder.Services.AddControllersWithViews().AddRazorOptions(options =>

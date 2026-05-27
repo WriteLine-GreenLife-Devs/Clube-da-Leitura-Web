@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using ClubeDaLeitura.WebApplication.Compartilhado.Dominio;
+using ClubeDaLeitura.WebApplication.Compartilhado.Infraestrutura.Arquivos;
 
 namespace ClubeDaLeitura.WebApplication.ModuloRevista.Dominio;
 
@@ -13,15 +14,13 @@ public enum StatusRevista
 
 public sealed class Revista : EntidadeBase<Revista>
 {
-    public string Id { get; set; }
     public string Titulo { get; set; }
     public int NumeroEdicao { get; set; }
-    public int AnoPublicacao { get; set; }
+    public DateTime AnoPublicacao { get; set; }
     public string CaixaId { get; set; }
-
     public StatusRevista Status { get; set; } = StatusRevista.Disponivel;
 
-    public Revista(string titulo, int numeroEdicao, int anoPublicacao, string caixaId)
+    public Revista(string titulo, int numeroEdicao, DateTime anoPublicacao, string caixaId)
     {
         Titulo = titulo;
         NumeroEdicao = numeroEdicao;
@@ -48,8 +47,8 @@ public sealed class Revista : EntidadeBase<Revista>
         if (NumeroEdicao <= 0)
             erros.Add("O número da edição deve ser positivo.");
 
-        if (AnoPublicacao < 1900 || AnoPublicacao > DateTime.Now.Year)
-            erros.Add("Ano de publicação inválido.");
+        if (AnoPublicacao < new DateTime(1, 1, 1900) || AnoPublicacao > DateTime.Now)
+            erros.Add("Data de publicação inválida.");
 
         if (string.IsNullOrWhiteSpace(CaixaId))
             erros.Add("A revista deve estar vinculada a uma caixa.");
