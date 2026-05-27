@@ -59,6 +59,18 @@ public class CaixaController : Controller
             cadastrarVm.DiasDeEmprestimo
         );
 
+        List<string> erros = novaCaixa.Validar();
+
+        if (erros.Any())
+        {
+            foreach (string erro in erros)
+            {
+                ModelState.AddModelError(string.Empty, erro);
+            }
+
+            return View(cadastrarVm);
+        }
+
         repositorioCaixa.Cadastrar(novaCaixa);
 
         return RedirectToAction(nameof(Listar));
@@ -94,6 +106,18 @@ public class CaixaController : Controller
             editarVm.Cor,
             editarVm.DiasDeEmprestimo
         );
+
+        List<string> erros = caixaAtualizada.Validar();
+
+        if (erros.Any())
+        {
+            foreach (string erro in erros)
+            {
+                ModelState.AddModelError(string.Empty, erro);
+            }
+
+            return View(editarVm);
+        }
 
         repositorioCaixa.Editar(editarVm.Id, caixaAtualizada);
 

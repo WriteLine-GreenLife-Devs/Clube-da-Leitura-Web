@@ -8,4 +8,6 @@ Carregar lista dos Módulos no Serializable;
 
 Colocar link da lista dos Módulos em _Layout.cshtml;
 
+Colocar botao da lista dos Módulos em Index.cshtml;
+
 Colocar link da lista dos Módulos em Index.cshtml;
