@@ -6,7 +6,7 @@
 @model List<ListarAmigosViewModel>;
 
 
-<a class="btn btn-outline-primary rounded-pill px-4 mb-3" asp-action="Cadastrar">Cadastrar Novo</a>
+<a class="btn-cadastrar-novo" asp-action="Cadastrar">Cadastrar Novo</a>
 
 @if (Model.Count == 0)
 {
@@ -17,8 +17,8 @@
 else
 {
     <div class="table-responsive">
-        <table class="table table-hover table-bordered align-middle bg-white">
-            <thead class="table-primary">
+        <table class="registros">
+            <thead>
                 <tr>
                     <th>ID</th>
                     <th>Nome</th>
@@ -37,10 +37,8 @@ else
                         <td>@a.NomeResponsavel</td>
                         <td>@a.Telefone</td>
                         <td>
-                            <div class="d-flex gap-2">
-                                <a class="btn btn-outline-primary btn-sm rounded-pill px-3" asp-action="Editar" asp-route-id="@a.Id">Editar</a>
-                                <a class="btn btn-outline-primary btn-sm rounded-pill px-3" asp-action="Excluir" asp-route-id="@a.Id">Excluir</a>
-                            </div>
+                            <a asp-action="Editar" asp-route-id="@a.Id">Editar</a>
+                            <a asp-action="Excluir" asp-route-id="@a.Id">Excluir</a>
                         </td>
                     </tr>
                 }
