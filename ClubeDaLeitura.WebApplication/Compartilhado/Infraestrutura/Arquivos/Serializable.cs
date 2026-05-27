@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ClubeDaLeitura.WebApplication.ModuloAmigo.Dominio;
 using ClubeDaLeitura.WebApplication.ModuloCaixa.Dominio;
+using ClubeDaLeitura.WebApplication.ModuloEmprestimo.Dominio;
 using ClubeDaLeitura.WebApplication.ModuloRevista.Dominio;
 
 namespace ClubeDaLeitura.WebApplication.Compartilhado.Infraestrutura.Arquivos;
@@ -12,6 +13,7 @@ public sealed class Serializable
     public List<Caixa> Caixas { get; set; } = new List<Caixa>();
     public List<Amigo> Amigos { get; set; } = new List<Amigo>();
     public List<Revista> Revistas { get; set; } = new List<Revista>();
+    public List<Emprestimo> Emprestimos { get; set; } = new List<Emprestimo>();
     
     #endregion
     private readonly string caminhoArquivo;
@@ -62,6 +64,7 @@ public sealed class Serializable
         Caixas = arquivoSalvo.Caixas;
         Amigos = arquivoSalvo.Amigos;
         Revistas = arquivoSalvo.Revistas;
+        Emprestimos = arquivoSalvo.Emprestimos;
 
         #endregion
     }
