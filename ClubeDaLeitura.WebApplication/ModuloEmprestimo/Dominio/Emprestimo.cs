@@ -1,4 +1,3 @@
-// ClubeDaLeitura.WebApplication.ModuloEmprestimo.Dominio/Emprestimo.cs
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
