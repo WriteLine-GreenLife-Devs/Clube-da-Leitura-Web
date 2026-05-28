@@ -1,0 +1,61 @@
+@using ClubeDaLeitura.WebApplication.ModuloAmigo.Dominio
+@using ClubeDaLeitura.WebApplication.ModuloRevista.Dominio
+@model CadastrarEmprestimoViewModel
+
+@{
+    Layout = "_Layout";
+    ViewBag.Titulo = "Registrar Empréstimo";
+    var amigos = ViewBag.Amigos as List<Amigo> ?? new List<Amigo>();
+    var revistas = ViewBag.Revistas as List<Revista> ?? new List<Revista>();
+}
+
+<form class="card border-primary-subtle shadow-sm mx-auto p-4" style="max-width: 620px;" asp-controller="Emprestimo" asp-action="Cadastrar" method="post">
+
+    @if (ViewData.ModelState.Values.SelectMany(v => v.Errors).Any())
+    {
+        <div asp-validation-summary="All" class="alert alert-danger border-danger rounded-3 p-3 mb-4" role="alert"></div>
+    }
+
+    <div class="mb-3">
+        <label asp-for="AmigoId" class="form-label fw-semibold text-primary text-uppercase small">Amigo</label>
+        <select asp-for="AmigoId" class="form-select">
+            <option value="">Selecione um amigo</option>
+            @foreach (Amigo amigo in amigos)
+            {
+                <option value="@amigo.Id" selected="@(Model.AmigoId == amigo.Id)">@amigo.Nome</option>
+            }
+        </select>
+        <span asp-validation-for="AmigoId" class="text-danger small fw-semibold"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="RevistaId" class="form-label fw-semibold text-primary text-uppercase small">Revista</label>
+        <select asp-for="RevistaId" class="form-select">
+            <option value="">Selecione uma revista disponível</option>
+            @foreach (Revista revista in revistas)
+            {
+                <option value="@revista.Id" selected="@(Model.RevistaId == revista.Id)">@revista.Titulo (Edição @revista.NumeroEdicao)</option>
+            }
+        </select>
+        <span asp-validation-for="RevistaId" class="text-danger small fw-semibold"></span>
+    </div>
+
+    @if (!amigos.Any())
+    {
+        <div class="alert alert-warning" role="alert">
+            Cadastre um amigo antes de registrar um empréstimo.
+        </div>
+    }
+
+    @if (!revistas.Any())
+    {
+        <div class="alert alert-warning" role="alert">
+            Nenhuma revista disponível no momento.
+        </div>
+    }
+
+    <div class="d-flex justify-content-end align-items-center gap-2 mt-4">
+        <a class="btn btn-outline-primary rounded-pill px-4 py-2" asp-controller="Emprestimo" asp-action="Listar">Voltar</a>
+        <button class="btn btn-primary rounded-pill px-4 py-2" type="submit" @(amigos.Any() && revistas.Any() ? string.Empty : "disabled")>Confirmar</button>
+    </div>
+</form>

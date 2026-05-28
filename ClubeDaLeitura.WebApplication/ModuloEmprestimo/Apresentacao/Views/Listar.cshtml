@@ -1,0 +1,89 @@
+@using ClubeDaLeitura.WebApplication.ModuloAmigo.Dominio
+@using ClubeDaLeitura.WebApplication.ModuloRevista.Dominio
+@model List<ListarEmprestimosViewModel>
+
+@{
+    Layout = "_Layout";
+    ViewBag.Titulo = "Listagem de Empréstimos";
+    var amigos = ViewBag.Amigos as List<Amigo> ?? new List<Amigo>();
+    var statusSelecionado = ViewBag.Status as string ?? string.Empty;
+    var amigoSelecionado = ViewBag.AmigoId as string ?? string.Empty;
+}
+
+<a class="btn-cadastrar-novo" asp-controller="Emprestimo" asp-action="Cadastrar">Registrar Empréstimo</a>
+
+<form class="card border-primary-subtle shadow-sm mx-auto p-4 mb-4" asp-controller="Emprestimo" asp-action="Listar" method="get">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label fw-semibold text-primary text-uppercase small">Amigo</label>
+            <select name="amigoId" class="form-select">
+                <option value="">Todos</option>
+                @foreach (Amigo amigo in amigos)
+                {
+                    <option value="@amigo.Id" selected="@(amigoSelecionado == amigo.Id)">@amigo.Nome</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label fw-semibold text-primary text-uppercase small">Status</label>
+            <select name="status" class="form-select">
+                <option value="">Todos</option>
+                <option value="Aberto" selected="@(statusSelecionado == "Aberto")">Aberto</option>
+                <option value="Concluido" selected="@(statusSelecionado == "Concluido")">Concluído</option>
+                <option value="Atrasado" selected="@(statusSelecionado == "Atrasado")">Atrasado</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2 mt-4">
+        <button class="btn btn-outline-primary rounded-pill px-4" type="submit">Filtrar</button>
+        <a class="btn btn-outline-secondary rounded-pill px-4" asp-action="Listar">Limpar</a>
+    </div>
+</form>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-primary border-start border-primary border-2 rounded-3" role="alert">
+        Nenhum empréstimo encontrado.
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="registros">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Amigo</th>
+                    <th>Revista</th>
+                    <th>Data Empréstimo</th>
+                    <th>Data Prevista</th>
+                    <th>Data Devolução</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (ListarEmprestimosViewModel emprestimo in Model)
+                {
+                    <tr class="@(emprestimo.Status == "Atrasado" ? "table-danger" : string.Empty)">
+                        <td>@emprestimo.Id</td>
+                        <td>@emprestimo.AmigoNome</td>
+                        <td>@emprestimo.RevistaTitulo</td>
+                        <td>@emprestimo.DataEmprestimo.ToString("dd/MM/yyyy")</td>
+                        <td>@emprestimo.DataDevolucaoPrevista.ToString("dd/MM/yyyy")</td>
+                        <td>@(emprestimo.DataDevolucaoReal.HasValue ? emprestimo.DataDevolucaoReal.Value.ToString("dd/MM/yyyy") : "-")</td>
+                        <td>@emprestimo.Status</td>
+                        <td>
+                            @if (emprestimo.Status == "Aberto" || emprestimo.Status == "Atrasado")
+                            {
+                                <a asp-action="Devolver" asp-route-id="@emprestimo.Id">Registrar Devolução</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

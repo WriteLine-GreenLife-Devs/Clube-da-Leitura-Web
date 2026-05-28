@@ -1,4 +1,6 @@
+using System.Linq;
 using ClubeDaLeitura.WebApplication.ModuloAmigo.Dominio;
+using ClubeDaLeitura.WebApplication.ModuloEmprestimo.Dominio;
 using ClubeDaLeituraWeb.WebApp.ModuloAmigo.Apresentacao;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,10 +9,12 @@ namespace ClubeDaLeitura.WebApplication.ModuloAmigo.Apresentacao;
 public class AmigoController : Controller
 {
     private readonly InterfaceRepositorioAmigo repositorioAmigo;
+    private readonly InterfaceRepositorioEmprestimo repositorioEmprestimo;
 
-    public AmigoController(InterfaceRepositorioAmigo repositorioAmigo)
+    public AmigoController(InterfaceRepositorioAmigo repositorioAmigo, InterfaceRepositorioEmprestimo repositorioEmprestimo)
     {
         this.repositorioAmigo = repositorioAmigo;
+        this.repositorioEmprestimo = repositorioEmprestimo;
     }
 
     [HttpGet]
@@ -147,8 +151,16 @@ public class AmigoController : Controller
     {
         Amigo? amigo = repositorioAmigo.SelecionarPorId(excluirVm.Id);
 
-        if (amigo != null)
-            repositorioAmigo.Excluir(amigo);
+        if (amigo == null)
+            return RedirectToAction(nameof(Listar));
+
+        if (repositorioEmprestimo.ObterPorAmigo(excluirVm.Id).Any())
+        {
+            ModelState.AddModelError(string.Empty, "Não é possível excluir um amigo com empréstimos vinculados.");
+            return View(excluirVm);
+        }
+
+        repositorioAmigo.Excluir(amigo);
 
         return RedirectToAction(nameof(Listar));
     }

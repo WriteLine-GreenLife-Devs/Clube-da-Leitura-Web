@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using ClubeDaLeitura.WebApplication.Compartilhado.Dominio;
 using ClubeDaLeitura.WebApplication.Compartilhado.Infraestrutura.Arquivos;
 
@@ -14,11 +15,13 @@ public enum StatusRevista
 
 public sealed class Revista : EntidadeBase<Revista>
 {
-    public string Titulo { get; set; }
+    public string Titulo { get; set; } = string.Empty;
     public int NumeroEdicao { get; set; }
     public DateTime AnoPublicacao { get; set; }
-    public string CaixaId { get; set; }
+    public string CaixaId { get; set; } = string.Empty;
     public StatusRevista Status { get; set; } = StatusRevista.Disponivel;
+
+    public Revista() { }
 
     public Revista(string titulo, int numeroEdicao, DateTime anoPublicacao, string caixaId)
     {
