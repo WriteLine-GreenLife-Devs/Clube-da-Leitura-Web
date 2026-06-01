@@ -70,3 +70,4 @@ public sealed class Amigo : EntidadeBase<Amigo>
         return erros;
     }
 }
+

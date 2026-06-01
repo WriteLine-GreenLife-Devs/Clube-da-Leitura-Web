@@ -1,17 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Text.Json.Serialization;
 using ClubeDaLeitura.WebApplication.Compartilhado.Dominio;
-using ClubeDaLeitura.WebApplication.Compartilhado.Infraestrutura.Arquivos;
 
 namespace ClubeDaLeitura.WebApplication.ModuloRevista.Dominio;
-
-public enum StatusRevista
-{
-    Disponivel,
-    Emprestada,
-    Reservada
-}
 
 public sealed class Revista : EntidadeBase<Revista>
 {

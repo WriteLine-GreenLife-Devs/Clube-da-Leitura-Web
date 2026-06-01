@@ -12,3 +12,4 @@ public class RepositorioCaixa : RepositorioBase<Caixa>, InterfaceRepositorioCaix
         return serializable.Caixas;
     }
 }
+

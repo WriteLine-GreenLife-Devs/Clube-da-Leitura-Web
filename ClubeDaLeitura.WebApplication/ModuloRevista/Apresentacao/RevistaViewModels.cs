@@ -1,13 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ClubeDaLeituraWeb.WebApp.ModuloRevista.Apresentacao;
+namespace ClubeDaLeitura.WebApplication.ModuloRevista.Apresentacao;
 
 public record ListarRevistasViewModel(
     string Id,
     string Titulo,
     int NumeroEdicao,
     DateTime AnoPublicacao,
-    string CaixaId,
+    string CaixaEtiqueta,
     string Status
 );
 

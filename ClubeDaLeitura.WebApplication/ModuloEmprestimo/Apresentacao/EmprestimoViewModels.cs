@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace ClubeDaLeituraWeb.WebApp.ModuloEmprestimo.Apresentacao;
+namespace ClubeDaLeitura.WebApplication.ModuloEmprestimo.Apresentacao;
 
 public record ListarEmprestimosViewModel(
     string Id,

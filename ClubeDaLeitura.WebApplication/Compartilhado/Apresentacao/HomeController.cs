@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace ClubeDaLeituraWeb.WebApp.ModuloHome.Apresentacao;
+namespace ClubeDaLeitura.WebApplication.ModuloHome.Apresentacao;
 
 public class HomeController : Controller
 {
@@ -10,3 +10,4 @@ public class HomeController : Controller
         return View();
     }
 }
+

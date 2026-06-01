@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ClubeDaLeituraWeb.WebApp.ModuloCaixa.Apresentacao;
+namespace ClubeDaLeitura.WebApplication.ModuloCaixa.Apresentacao;
 public record ListarCaixasViewModel(
     string Id,
     string Etiqueta,
@@ -40,3 +40,4 @@ public record ExcluirCaixaViewModel(
     string Cor,
     int DiasDeEmprestimo
 );
+

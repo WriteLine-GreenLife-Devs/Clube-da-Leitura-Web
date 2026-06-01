@@ -1,40 +1,19 @@
-using System.Linq;
-using ClubeDaLeitura.WebApplication.ModuloAmigo.Dominio;
-using ClubeDaLeitura.WebApplication.ModuloEmprestimo.Dominio;
-using ClubeDaLeituraWeb.WebApp.ModuloAmigo.Apresentacao;
+using AutoMapper;
+using ClubeDaLeitura.WebApplication.Compartilhado.Apresentacao.Extensions;
+using ClubeDaLeitura.WebApplication.ModuloAmigo.Aplicacao;
+using FluentResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClubeDaLeitura.WebApplication.ModuloAmigo.Apresentacao;
 
-public class AmigoController : Controller
+public class AmigoController(ServicoAmigo servicoAmigo, IMapper mapeador) : Controller
 {
-    private readonly InterfaceRepositorioAmigo repositorioAmigo;
-    private readonly InterfaceRepositorioEmprestimo repositorioEmprestimo;
-
-    public AmigoController(InterfaceRepositorioAmigo repositorioAmigo, InterfaceRepositorioEmprestimo repositorioEmprestimo)
-    {
-        this.repositorioAmigo = repositorioAmigo;
-        this.repositorioEmprestimo = repositorioEmprestimo;
-    }
-
     [HttpGet]
     public ActionResult Listar()
     {
-        List<Amigo> amigos = repositorioAmigo.SelecionarTodos();
+        List<ListarAmigosDto> dtos = servicoAmigo.SelecionarTodos();
 
-        List<ListarAmigosViewModel> listarVms = new List<ListarAmigosViewModel>();
-
-        foreach (Amigo a in amigos)
-        {
-            ListarAmigosViewModel viewModel = new ListarAmigosViewModel(
-                a.Id,
-                a.Nome,
-                a.NomeResponsavel,
-                a.Telefone
-            );
-
-            listarVms.Add(viewModel);
-        }
+        List<ListarAmigosViewModel> listarVms = mapeador.Map<List<ListarAmigosViewModel>>(dtos);
 
         return View(listarVms);
     }
@@ -42,7 +21,7 @@ public class AmigoController : Controller
     [HttpGet]
     public ActionResult Cadastrar()
     {
-        CadastrarAmigoViewModel cadastrarVm = new CadastrarAmigoViewModel(
+        CadastrarAmigoViewModel cadastrarVm = new(
             string.Empty,
             string.Empty,
             string.Empty
@@ -57,44 +36,26 @@ public class AmigoController : Controller
         if (!ModelState.IsValid)
             return View(cadastrarVm);
 
-        Amigo novoAmigo = new Amigo(
-            cadastrarVm.Nome,
-            cadastrarVm.NomeResponsavel,
-            cadastrarVm.Telefone
-        );
+        Result resultado = servicoAmigo.Cadastrar(mapeador.Map<CadastrarAmigoDto>(cadastrarVm));
 
-        List<string> erros = novoAmigo.Validar();
-
-        if (erros.Any())
+        if (resultado.IsFailed)
         {
-            foreach (string erro in erros)
-            {
-                ModelState.AddModelError(string.Empty, erro);
-            }
-
+            ModelState.AddModelError(resultado);
             return View(cadastrarVm);
         }
-
-        repositorioAmigo.Cadastrar(novoAmigo);
 
         return RedirectToAction(nameof(Listar));
     }
 
-
     [HttpGet]
     public ActionResult Editar(string id)
     {
-        Amigo? amigo = repositorioAmigo.SelecionarPorId(id);
+        Result<DetalhesAmigoDto> resultado = servicoAmigo.SelecionarPorId(id);
 
-        if (amigo == null)
+        if (resultado.IsFailed)
             return RedirectToAction(nameof(Listar));
 
-        EditarAmigoViewModel editarVm = new EditarAmigoViewModel(
-            id,
-            amigo.Nome,
-            amigo.NomeResponsavel,
-            amigo.Telefone
-        );
+        EditarAmigoViewModel editarVm = mapeador.Map<EditarAmigoViewModel>(resultado.Value);
 
         return View(editarVm);
     }
@@ -105,25 +66,13 @@ public class AmigoController : Controller
         if (!ModelState.IsValid)
             return View(editarVm);
 
-        Amigo amigoAtualizado = new Amigo(
-            editarVm.Nome,
-            editarVm.NomeResponsavel,
-            editarVm.Telefone
-        );
+        Result resultado = servicoAmigo.Editar(mapeador.Map<EditarAmigoDto>(editarVm));
 
-        List<string> erros = amigoAtualizado.Validar();
-
-        if (erros.Any())
+        if (resultado.IsFailed)
         {
-            foreach (string erro in erros)
-            {
-                ModelState.AddModelError(string.Empty, erro);
-            }
-
+            ModelState.AddModelError(resultado);
             return View(editarVm);
         }
-
-        repositorioAmigo.Editar(editarVm.Id, amigoAtualizado);
 
         return RedirectToAction(nameof(Listar));
     }
@@ -131,37 +80,32 @@ public class AmigoController : Controller
     [HttpGet]
     public ActionResult Excluir(string id)
     {
-        Amigo? amigo = repositorioAmigo.SelecionarPorId(id);
+        Result<DetalhesAmigoDto> resultado = servicoAmigo.SelecionarPorId(id);
 
-        if (amigo == null)
+        if (resultado.IsFailed)
             return RedirectToAction(nameof(Listar));
 
-        ExcluirAmigoViewModel excluirVm = new ExcluirAmigoViewModel(
-            id,
-            amigo.Nome,
-            amigo.NomeResponsavel,
-            amigo.Telefone
-        );
+        ExcluirAmigoViewModel excluirVm = mapeador.Map<ExcluirAmigoViewModel>(resultado.Value);
 
         return View(excluirVm);
     }
 
     [HttpPost]
-    public ActionResult Excluir(ExcluirAmigoViewModel excluirVm)
+    [ActionName("Excluir")]
+    public ActionResult ConfirmarExcluir(string id)
     {
-        Amigo? amigo = repositorioAmigo.SelecionarPorId(excluirVm.Id);
-
-        if (amigo == null)
+        if (string.IsNullOrWhiteSpace(id))
             return RedirectToAction(nameof(Listar));
 
-        if (repositorioEmprestimo.ObterPorAmigo(excluirVm.Id).Any())
-        {
-            ModelState.AddModelError(string.Empty, "Não é possível excluir um amigo com empréstimos vinculados.");
-            return View(excluirVm);
-        }
+        Result resultado = servicoAmigo.Excluir(id);
 
-        repositorioAmigo.Excluir(amigo);
+        if (resultado.IsFailed)
+        {
+            ModelState.AddModelError(resultado);
+            return View(new ExcluirAmigoViewModel(id, string.Empty, string.Empty, string.Empty));
+        }
 
         return RedirectToAction(nameof(Listar));
     }
 }
+

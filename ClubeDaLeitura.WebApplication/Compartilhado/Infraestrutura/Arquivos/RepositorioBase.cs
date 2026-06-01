@@ -85,3 +85,4 @@ public abstract class RepositorioBase<T> where T : EntidadeBase<T>
         return arquivosFiltrados;
     }
 }
+

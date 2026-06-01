@@ -35,7 +35,6 @@ public sealed class Serializable
         JsonSerializerOptions opcoesJson = new JsonSerializerOptions();
         opcoesJson.WriteIndented = true;
         opcoesJson.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-        opcoesJson.ReferenceHandler = ReferenceHandler.Preserve;
 
         string jsonString = JsonSerializer.Serialize(this, opcoesJson);
 
@@ -51,10 +50,18 @@ public sealed class Serializable
 
         JsonSerializerOptions opcoesJson = new JsonSerializerOptions();
         opcoesJson.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-        opcoesJson.ReferenceHandler = ReferenceHandler.Preserve;
+        opcoesJson.PropertyNameCaseInsensitive = true;
 
-        Serializable? arquivoSalvo = JsonSerializer
-            .Deserialize<Serializable>(jsonString, opcoesJson);
+        Serializable? arquivoSalvo = null;
+
+        try
+        {
+            arquivoSalvo = JsonSerializer.Deserialize<Serializable>(jsonString, opcoesJson);
+        }
+        catch (JsonException)
+        {
+            arquivoSalvo = CarregarFormatoPreservado(jsonString, opcoesJson);
+        }
 
         if (arquivoSalvo == null)
             return;
@@ -68,4 +75,40 @@ public sealed class Serializable
 
         #endregion
     }
+
+    private static Serializable? CarregarFormatoPreservado(string jsonString, JsonSerializerOptions opcoesJson)
+    {
+        using JsonDocument documento = JsonDocument.Parse(jsonString);
+
+        JsonElement raiz = documento.RootElement;
+        if (raiz.ValueKind != JsonValueKind.Object)
+            return null;
+
+        return new Serializable
+        {
+            Caixas = DeserializarLista<Caixa>(raiz, "caixas", opcoesJson),
+            Amigos = DeserializarLista<Amigo>(raiz, "amigos", opcoesJson),
+            Revistas = DeserializarLista<Revista>(raiz, "revistas", opcoesJson),
+            Emprestimos = DeserializarLista<Emprestimo>(raiz, "emprestimos", opcoesJson)
+        };
+    }
+
+    private static List<T> DeserializarLista<T>(JsonElement raiz, string propriedade, JsonSerializerOptions opcoesJson)
+    {
+        if (!raiz.TryGetProperty(propriedade, out JsonElement elemento))
+            return new List<T>();
+
+        if (elemento.ValueKind == JsonValueKind.Object && elemento.TryGetProperty("$values", out JsonElement valores))
+        {
+            return JsonSerializer.Deserialize<List<T>>(valores.GetRawText(), opcoesJson) ?? new List<T>();
+        }
+
+        if (elemento.ValueKind == JsonValueKind.Array)
+        {
+            return JsonSerializer.Deserialize<List<T>>(elemento.GetRawText(), opcoesJson) ?? new List<T>();
+        }
+
+        return new List<T>();
+    }
 }
+

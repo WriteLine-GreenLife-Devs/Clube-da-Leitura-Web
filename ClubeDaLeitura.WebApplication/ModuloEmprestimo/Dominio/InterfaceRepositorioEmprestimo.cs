@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using ClubeDaLeitura.WebApplication.Compartilhado.Dominio;
-using ClubeDaLeitura.WebApplication.Compartilhado.Infraestrutura;
 
 namespace ClubeDaLeitura.WebApplication.ModuloEmprestimo.Dominio;
 

@@ -1,4 +1,4 @@
-using ClubeDaLeitura.WebApplication.Compartilhado.Infraestrutura;
+using ClubeDaLeitura.WebApplication.Compartilhado.Dominio;
 
 namespace ClubeDaLeitura.WebApplication.ModuloRevista.Dominio;
 

@@ -1,36 +1,19 @@
-using ClubeDaLeitura.WebApplication.ModuloCaixa.Dominio;
-using ClubeDaLeituraWeb.WebApp.ModuloCaixa.Apresentacao;
+using AutoMapper;
+using ClubeDaLeitura.WebApplication.Compartilhado.Apresentacao.Extensions;
+using ClubeDaLeitura.WebApplication.ModuloCaixa.Aplicacao;
+using FluentResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClubeDaLeitura.WebApplication.ModuloCaixa.Apresentacao;
 
-public class CaixaController : Controller
+public class CaixaController(ServicoCaixa servicoCaixa, IMapper mapeador) : Controller
 {
-    private readonly InterfaceRepositorioCaixa repositorioCaixa;
-
-    public CaixaController(InterfaceRepositorioCaixa repositorioCaixa)
-    {
-        this.repositorioCaixa = repositorioCaixa;
-    }
-
     [HttpGet]
     public ActionResult Listar()
     {
-        List<Caixa> caixas = repositorioCaixa.SelecionarTodos();
+        List<ListarCaixasDto> dtos = servicoCaixa.SelecionarTodos();
 
-        List<ListarCaixasViewModel> listarVms = new List<ListarCaixasViewModel>();
-
-        foreach (Caixa c in caixas)
-        {
-            ListarCaixasViewModel viewModel = new ListarCaixasViewModel(
-                c.Id,
-                c.Etiqueta,
-                c.Cor,
-                c.DiasDeEmprestimo
-            );
-
-            listarVms.Add(viewModel);
-        }
+        List<ListarCaixasViewModel> listarVms = mapeador.Map<List<ListarCaixasViewModel>>(dtos);
 
         return View(listarVms);
     }
@@ -38,7 +21,7 @@ public class CaixaController : Controller
     [HttpGet]
     public ActionResult Cadastrar()
     {
-        CadastrarCaixaViewModel cadastrarVm = new CadastrarCaixaViewModel(
+        CadastrarCaixaViewModel cadastrarVm = new(
             string.Empty,
             string.Empty,
             7
@@ -53,62 +36,28 @@ public class CaixaController : Controller
         if (!ModelState.IsValid)
             return View(cadastrarVm);
 
-        Caixa novaCaixa = new Caixa(
-            cadastrarVm.Etiqueta,
-            cadastrarVm.Cor,
-            cadastrarVm.DiasDeEmprestimo
-        );
+        Result resultado = servicoCaixa.Cadastrar(mapeador.Map<CadastrarCaixaDto>(cadastrarVm));
 
-        List<string> erros = novaCaixa.Validar();
-
-        if (ExisteCaixaComEtiqueta(cadastrarVm.Etiqueta))
-            erros.Add("Já existe uma caixa com esta etiqueta.");
-
-        if (erros.Any())
+        if (resultado.IsFailed)
         {
-            foreach (string erro in erros)
-            {
-                ModelState.AddModelError(string.Empty, erro);
-            }
-
+            ModelState.AddModelError(resultado);
             return View(cadastrarVm);
         }
-
-        repositorioCaixa.Cadastrar(novaCaixa);
 
         return RedirectToAction(nameof(Listar));
     }
 
-
     [HttpGet]
     public ActionResult Editar(string id)
     {
-        Caixa? caixa = repositorioCaixa.SelecionarPorId(id);
+        Result<DetalhesCaixaDto> resultado = servicoCaixa.SelecionarPorId(id);
 
-        if (caixa == null)
+        if (resultado.IsFailed)
             return RedirectToAction(nameof(Listar));
 
-        EditarCaixaViewModel editarVm = new EditarCaixaViewModel(
-            id,
-            caixa.Etiqueta,
-            caixa.Cor,
-            caixa.DiasDeEmprestimo
-        );
+        EditarCaixaViewModel editarVm = mapeador.Map<EditarCaixaViewModel>(resultado.Value);
 
         return View(editarVm);
-    }
-
-    private bool ExisteCaixaComEtiqueta(string etiqueta, string? idIgnorado = null)
-    {
-        List<Caixa> caixas = repositorioCaixa.SelecionarTodos();
-
-        foreach (Caixa c in caixas)
-        {
-            if (c.Id != idIgnorado && string.Equals(c.Etiqueta, etiqueta, StringComparison.OrdinalIgnoreCase))
-                return true;
-        }
-
-        return false;
     }
 
     [HttpPost]
@@ -117,28 +66,13 @@ public class CaixaController : Controller
         if (!ModelState.IsValid)
             return View(editarVm);
 
-        Caixa caixaAtualizada = new Caixa(
-            editarVm.Etiqueta,
-            editarVm.Cor,
-            editarVm.DiasDeEmprestimo
-        );
+        Result resultado = servicoCaixa.Editar(mapeador.Map<EditarCaixaDto>(editarVm));
 
-        List<string> erros = caixaAtualizada.Validar();
-
-        if (ExisteCaixaComEtiqueta(caixaAtualizada.Etiqueta, editarVm.Id))
-            erros.Add("Já existe uma caixa com esta etiqueta.");
-
-        if (erros.Any())
+        if (resultado.IsFailed)
         {
-            foreach (string erro in erros)
-            {
-                ModelState.AddModelError(string.Empty, erro);
-            }
-
+            ModelState.AddModelError(resultado);
             return View(editarVm);
         }
-
-        repositorioCaixa.Editar(editarVm.Id, caixaAtualizada);
 
         return RedirectToAction(nameof(Listar));
     }
@@ -146,17 +80,12 @@ public class CaixaController : Controller
     [HttpGet]
     public ActionResult Excluir(string id)
     {
-        Caixa? caixa = repositorioCaixa.SelecionarPorId(id);
+        Result<DetalhesCaixaDto> resultado = servicoCaixa.SelecionarPorId(id);
 
-        if (caixa == null)
+        if (resultado.IsFailed)
             return RedirectToAction(nameof(Listar));
 
-        ExcluirCaixaViewModel excluirVm = new ExcluirCaixaViewModel(
-            id,
-            caixa.Etiqueta,
-            caixa.Cor,
-            caixa.DiasDeEmprestimo
-        );
+        ExcluirCaixaViewModel excluirVm = mapeador.Map<ExcluirCaixaViewModel>(resultado.Value);
 
         return View(excluirVm);
     }
@@ -164,11 +93,15 @@ public class CaixaController : Controller
     [HttpPost]
     public ActionResult Excluir(ExcluirCaixaViewModel excluirVm)
     {
-        Caixa? caixa = repositorioCaixa.SelecionarPorId(excluirVm.Id);
+        Result resultado = servicoCaixa.Excluir(excluirVm.Id);
 
-        if (caixa != null)
-            repositorioCaixa.Excluir(caixa);
+        if (resultado.IsFailed)
+        {
+            ModelState.AddModelError(resultado);
+            return View(excluirVm);
+        }
 
         return RedirectToAction(nameof(Listar));
     }
 }
+

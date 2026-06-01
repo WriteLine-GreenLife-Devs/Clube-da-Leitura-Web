@@ -11,3 +11,4 @@ public abstract class EntidadeBase<T>
     public abstract List<string> Validar();
     public abstract void AtualizarDados(T entidadeAtualizada);
 }
+

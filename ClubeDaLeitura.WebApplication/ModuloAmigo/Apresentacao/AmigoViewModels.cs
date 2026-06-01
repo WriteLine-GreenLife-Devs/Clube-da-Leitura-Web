@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ClubeDaLeituraWeb.WebApp.ModuloAmigo.Apresentacao;
+namespace ClubeDaLeitura.WebApplication.ModuloAmigo.Apresentacao;
 public record ListarAmigosViewModel(
     string Id,
     string Nome,
@@ -44,3 +44,4 @@ public record ExcluirAmigoViewModel(
     string NomeResponsavel,
     string Telefone
 );
+

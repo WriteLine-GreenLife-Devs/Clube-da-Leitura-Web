@@ -12,3 +12,4 @@ public class RepositorioAmigo : RepositorioBase<Amigo>, InterfaceRepositorioAmig
         return serializable.Amigos;
     }
 }
+

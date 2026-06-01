@@ -1,6 +1,6 @@
 using ClubeDaLeitura.WebApplication.Compartilhado.Dominio;
 
-namespace ClubeDaLeitura.WebApplication.Compartilhado.Infraestrutura;
+namespace ClubeDaLeitura.WebApplication.Compartilhado.Dominio;
 
 public interface InterfaceRepositorio<T> where T : EntidadeBase<T>
 {

@@ -1,43 +1,20 @@
-using ClubeDaLeitura.WebApplication.ModuloRevista.Dominio;
+using AutoMapper;
+using ClubeDaLeitura.WebApplication.Compartilhado.Apresentacao.Extensions;
 using ClubeDaLeitura.WebApplication.ModuloCaixa.Dominio;
+using ClubeDaLeitura.WebApplication.ModuloRevista.Aplicacao;
+using FluentResults;
 using Microsoft.AspNetCore.Mvc;
-using ClubeDaLeituraWeb.WebApp.ModuloRevista.Apresentacao;
 
 namespace ClubeDaLeitura.WebApplication.ModuloRevista.Apresentacao;
 
-public class RevistaController : Controller
+public class RevistaController(ServicoRevista servicoRevista, InterfaceRepositorioCaixa repositorioCaixa, IMapper mapeador) : Controller
 {
-    private readonly InterfaceRepositorioRevista repositorioRevista;
-    private readonly InterfaceRepositorioCaixa repositorioCaixa;
-
-    public RevistaController(InterfaceRepositorioRevista repositorioRevista, InterfaceRepositorioCaixa repositorioCaixa)
-    {
-        this.repositorioRevista = repositorioRevista;
-        this.repositorioCaixa = repositorioCaixa;
-    }
-
     [HttpGet]
     public ActionResult Listar()
     {
-        List<Revista> revistas = repositorioRevista.SelecionarTodos();
+        List<ListarRevistasDto> dtos = servicoRevista.SelecionarTodos();
 
-        List<ListarRevistasViewModel> listarVms = new();
-
-        foreach (Revista r in revistas)
-        {
-            Caixa? caixa = repositorioCaixa.SelecionarPorId(r.CaixaId);
-
-            ListarRevistasViewModel vm = new ListarRevistasViewModel(
-                r.Id,
-                r.Titulo,
-                r.NumeroEdicao,
-                r.AnoPublicacao,
-                caixa?.Etiqueta ?? "Sem Caixa",
-                r.Status.ToString()
-            );
-
-            listarVms.Add(vm);
-        }
+        List<ListarRevistasViewModel> listarVms = mapeador.Map<List<ListarRevistasViewModel>>(dtos ?? new List<ListarRevistasDto>());
 
         return View(listarVms);
     }
@@ -63,31 +40,14 @@ public class RevistaController : Controller
         if (!ModelState.IsValid)
             return View(cadastrarVm);
 
-        Revista novaRevista = new(
-            cadastrarVm.Titulo,
-            cadastrarVm.NumeroEdicao,
-            cadastrarVm.AnoPublicacao,
-            cadastrarVm.CaixaId
-        );
+        Result resultado = servicoRevista.Cadastrar(mapeador.Map<CadastrarRevistaDto>(cadastrarVm));
 
-        List<string> erros = novaRevista.Validar();
-
-        if (repositorioRevista.SelecionarTodos()
-            .Any(r => r.Titulo == cadastrarVm.Titulo && r.NumeroEdicao == cadastrarVm.NumeroEdicao))
+        if (resultado.IsFailed)
         {
-            erros.Add("Já existe uma revista com este título e edição.");
-        }
-
-        if (erros.Any())
-        {
-            foreach (string erro in erros)
-                ModelState.AddModelError(string.Empty, erro);
-
+            ModelState.AddModelError(resultado);
             ViewBag.Caixas = repositorioCaixa.SelecionarTodos();
             return View(cadastrarVm);
         }
-
-        repositorioRevista.Cadastrar(novaRevista);
 
         return RedirectToAction(nameof(Listar));
     }
@@ -95,20 +55,14 @@ public class RevistaController : Controller
     [HttpGet]
     public ActionResult Editar(string id)
     {
-        Revista? revista = repositorioRevista.SelecionarPorId(id);
+        Result<DetalhesRevistaDto> resultado = servicoRevista.SelecionarPorId(id);
 
-        if (revista == null)
+        if (resultado.IsFailed)
             return RedirectToAction(nameof(Listar));
 
         ViewBag.Caixas = repositorioCaixa.SelecionarTodos();
 
-        EditarRevistaViewModel editarVm = new(
-            id,
-            revista.Titulo,
-            revista.NumeroEdicao,
-            revista.AnoPublicacao,
-            revista.CaixaId
-        );
+        EditarRevistaViewModel editarVm = mapeador.Map<EditarRevistaViewModel>(resultado.Value);
 
         return View(editarVm);
     }
@@ -119,37 +73,15 @@ public class RevistaController : Controller
         if (!ModelState.IsValid)
             return View(editarVm);
 
-        Revista? revista = repositorioRevista.SelecionarPorId(editarVm.Id);
+        Result resultado = servicoRevista.Editar(mapeador.Map<EditarRevistaDto>(editarVm));
 
-        if (revista == null)
-            return RedirectToAction(nameof(Listar));
-
-        Revista revistaAtualizada = new Revista(
-            editarVm.Titulo,
-            editarVm.NumeroEdicao,
-            editarVm.AnoPublicacao,
-            editarVm.CaixaId
-        );
-
-        List<string> erros = revistaAtualizada.Validar();
-
-        if (repositorioRevista.SelecionarTodos()
-            .Any(r => r.Titulo == editarVm.Titulo && r.NumeroEdicao == editarVm.NumeroEdicao && r.Id != editarVm.Id))
+        if (resultado.IsFailed)
         {
-            erros.Add("Já existe uma revista com este título e edição.");
-        }
-
-        if (erros.Any())
-        {
-            foreach (string erro in erros)
-                ModelState.AddModelError(string.Empty, erro);
-
+            ModelState.AddModelError(resultado);
             ViewBag.Caixas = repositorioCaixa.SelecionarTodos();
             ViewBag.Titulo = "Editar Revista";
             return View(editarVm);
         }
-
-        repositorioRevista.Editar(editarVm.Id, revistaAtualizada);
 
         return RedirectToAction(nameof(Listar));
     }
@@ -157,29 +89,29 @@ public class RevistaController : Controller
     [HttpGet]
     public ActionResult Excluir(string id)
     {
-        Revista? revista = repositorioRevista.SelecionarPorId(id);
+        Result<DetalhesRevistaDto> resultado = servicoRevista.SelecionarPorId(id);
 
-        if (revista == null)
+        if (resultado.IsFailed)
             return RedirectToAction(nameof(Listar));
 
-        ExcluirRevistaViewModel excluirVm = new(
-            id,
-            revista.Titulo,
-            revista.NumeroEdicao,
-            revista.AnoPublicacao,
-            revista.CaixaId
-        );
+        ExcluirRevistaViewModel excluirVm = mapeador.Map<ExcluirRevistaViewModel>(resultado.Value);
 
         return View(excluirVm);
     }
 
     [HttpPost]
-    public ActionResult Excluir(ExcluirRevistaViewModel excluirVm)
+    [ActionName("Excluir")]
+    public ActionResult ConfirmarExcluir(string id)
     {
-        Revista? revista = repositorioRevista.SelecionarPorId(excluirVm.Id);
+        Result resultado = servicoRevista.Excluir(id);
 
-        if (revista != null)
-            repositorioRevista.Excluir(revista);
+        if (resultado.IsFailed)
+        {
+            ModelState.AddModelError(resultado);
+            Result<DetalhesRevistaDto> detalhes = servicoRevista.SelecionarPorId(id);
+            ExcluirRevistaViewModel excluirVm = mapeador.Map<ExcluirRevistaViewModel>(detalhes.Value);
+            return View(excluirVm);
+        }
 
         return RedirectToAction(nameof(Listar));
     }
