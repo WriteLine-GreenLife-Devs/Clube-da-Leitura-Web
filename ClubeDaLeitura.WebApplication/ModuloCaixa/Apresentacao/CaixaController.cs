@@ -61,6 +61,9 @@ public class CaixaController : Controller
 
         List<string> erros = novaCaixa.Validar();
 
+        if (ExisteCaixaComEtiqueta(cadastrarVm.Etiqueta))
+            erros.Add("Já existe uma caixa com esta etiqueta.");
+
         if (erros.Any())
         {
             foreach (string erro in erros)
@@ -95,6 +98,19 @@ public class CaixaController : Controller
         return View(editarVm);
     }
 
+    private bool ExisteCaixaComEtiqueta(string etiqueta, string? idIgnorado = null)
+    {
+        List<Caixa> caixas = repositorioCaixa.SelecionarTodos();
+
+        foreach (Caixa c in caixas)
+        {
+            if (c.Id != idIgnorado && string.Equals(c.Etiqueta, etiqueta, StringComparison.OrdinalIgnoreCase))
+                return true;
+        }
+
+        return false;
+    }
+
     [HttpPost]
     public ActionResult Editar(EditarCaixaViewModel editarVm)
     {
@@ -108,6 +124,9 @@ public class CaixaController : Controller
         );
 
         List<string> erros = caixaAtualizada.Validar();
+
+        if (ExisteCaixaComEtiqueta(caixaAtualizada.Etiqueta, editarVm.Id))
+            erros.Add("Já existe uma caixa com esta etiqueta.");
 
         if (erros.Any())
         {
