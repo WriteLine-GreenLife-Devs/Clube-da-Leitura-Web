@@ -37,8 +37,10 @@ else
                         <td>@c.Cor</td>
                         <td>@c.DiasDeEmprestimo</td>
                         <td>
-                            <a asp-action="Editar" asp-route-id="@c.Id">Editar</a>
-                            <a asp-action="Excluir" asp-route-id="@c.Id">Excluir</a>
+                            <div class="acoes-wrapper">
+                                <a asp-action="Editar" asp-route-id="@c.Id">Editar</a>
+                                <a asp-action="Excluir" asp-route-id="@c.Id">Excluir</a>
+                            </div>
                         </td>
                     </tr>
                 }

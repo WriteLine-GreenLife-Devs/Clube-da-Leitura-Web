@@ -54,7 +54,7 @@
         </div>
     }
 
-    <div class="d-flex justify-content-end align-items-center gap-2 mt-4">
+    <div class="form-buttons-group">
         <a class="btn btn-outline-primary rounded-pill px-4 py-2" asp-controller="Emprestimo" asp-action="Listar">Voltar</a>
         <button class="btn btn-primary rounded-pill px-4 py-2" type="submit" @(amigos.Any() && revistas.Any() ? string.Empty : "disabled")>Confirmar</button>
     </div>

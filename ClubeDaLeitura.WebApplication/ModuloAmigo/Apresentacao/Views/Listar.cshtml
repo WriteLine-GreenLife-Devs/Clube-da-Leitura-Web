@@ -37,9 +37,11 @@ else
                         <td>@a.NomeResponsavel</td>
                         <td>@a.Telefone</td>
                         <td>
-                            <a asp-action="Editar" asp-route-id="@a.Id">Editar</a>
-                            <a asp-controller="Emprestimo" asp-action="Listar" asp-route-amigoId="@a.Id">Empréstimos</a>
-                            <a asp-action="Excluir" asp-route-id="@a.Id">Excluir</a>
+                            <div class="acoes-wrapper">
+                                <a asp-action="Editar" asp-route-id="@a.Id">Editar</a>
+                                <a asp-controller="Emprestimo" asp-action="Listar" asp-route-amigoId="@a.Id">Empréstimos</a>
+                                <a asp-action="Excluir" asp-route-id="@a.Id">Excluir</a>
+                            </div>
                         </td>
                     </tr>
                 }

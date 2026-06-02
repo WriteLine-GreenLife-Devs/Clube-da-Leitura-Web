@@ -40,8 +40,10 @@ else
                         <td>@revista.CaixaEtiqueta</td>
                         <td>@revista.Status</td>
                         <td>
-                            <a asp-action="Editar" asp-route-id="@revista.Id">Editar</a>
-                            <a asp-action="Excluir" asp-route-id="@revista.Id">Excluir</a>
+                            <div class="acoes-wrapper">
+                                <a asp-action="Editar" asp-route-id="@revista.Id">Editar</a>
+                                <a asp-action="Excluir" asp-route-id="@revista.Id">Excluir</a>
+                            </div>
                         </td>
                     </tr>
                 }

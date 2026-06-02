@@ -35,7 +35,7 @@
         </div>
     </div>
 
-    <div class="d-flex justify-content-end gap-2 mt-4">
+    <div class="form-buttons-group">
         <button class="btn btn-outline-primary rounded-pill px-4 py-2" type="submit">Filtrar</button>
         <a class="btn btn-outline-secondary rounded-pill px-4 py-2" asp-action="Listar">Limpar</a>
     </div>
@@ -76,10 +76,12 @@ else
                         <td>@(emprestimo.DataDevolucaoReal.HasValue ? emprestimo.DataDevolucaoReal.Value.ToString("dd/MM/yyyy") : "-")</td>
                         <td>@emprestimo.Status</td>
                         <td>
-                            @if (emprestimo.Status == "Aberto" || emprestimo.Status == "Atrasado")
-                            {
-                                <a class="btn btn-outline-primary rounded-pill px-4 py-2" asp-action="Devolver" asp-route-id="@emprestimo.Id">Registrar Devolução</a>
-                            }
+                            <div class="acoes-wrapper">
+                                @if (emprestimo.Status == "Aberto" || emprestimo.Status == "Atrasado")
+                                {
+                                    <a class="btn btn-outline-primary rounded-pill px-3 py-2" asp-action="Devolver" asp-route-id="@emprestimo.Id">Registrar Devolução</a>
+                                }
+                            </div>
                         </td>
                     </tr>
                 }
