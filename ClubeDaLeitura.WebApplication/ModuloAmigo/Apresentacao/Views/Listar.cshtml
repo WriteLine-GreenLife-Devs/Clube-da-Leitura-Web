@@ -32,11 +32,11 @@ else
                 @foreach (ListarAmigosViewModel a in Model)
                 {
                     <tr>
-                        <td>@a.Id</td>
-                        <td>@a.Nome</td>
-                        <td>@a.NomeResponsavel</td>
-                        <td>@a.Telefone</td>
-                        <td>
+                        <td data-label="ID">@a.Id</td>
+                        <td data-label="Nome">@a.Nome</td>
+                        <td data-label="Responsável">@a.NomeResponsavel</td>
+                        <td data-label="Telefone">@a.Telefone</td>
+                        <td data-label="Ações">
                             <div class="acoes-wrapper">
                                 <a asp-action="Editar" asp-route-id="@a.Id">Editar</a>
                                 <a asp-controller="Emprestimo" asp-action="Listar" asp-route-amigoId="@a.Id">Empréstimos</a>

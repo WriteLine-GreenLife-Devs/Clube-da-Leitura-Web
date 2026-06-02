@@ -369,41 +369,97 @@ form.card {
         margin: 12px 0;
     }
 
+    /* Transforma tabela em cards para mobile */
     .registros {
-        font-size: 0.75rem;
-    }
-
-    .registros th,
-    .registros td {
-        padding: 10px 8px;
-    }
-
-    .registros a {
-        display: flex;
+        display: block;
+        border-collapse: separate;
+        border-spacing: 0 12px;
         width: 100%;
-        padding: 8px 10px;
-        margin-bottom: 6px;
-        margin-right: 0;
-        font-size: 0.75rem;
-        justify-content: center;
-        align-items: center;
-        word-break: break-word;
+        background: transparent;
+        box-shadow: none;
+        border-radius: 0;
+        font-size: 0.85rem;
     }
 
+    /* Oculta cabeçalho no mobile */
+    .registros thead {
+        display: none;
+    }
+
+    /* Cada linha daqui virará um card */
+    .registros tbody tr {
+        display: grid;
+        grid-template-columns: 1fr;
+        background-color: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        padding: 12px;
+        margin-bottom: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border-bottom: none;
+    }
+
+    .registros tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .registros tbody tr:nth-child(even) {
+        background-color: rgba(255, 255, 255, 0.12);
+    }
+
+    /* Cada célula daqui virará uma linha no card */
     .registros td {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 10px;
+        padding: 6px 0;
+        border: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        align-items: start;
     }
 
     .registros td:last-child {
+        border-bottom: none;
+    }
+
+    /* Mostra o rótulo do data-label antes de cada valor atribuido */
+    .registros td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: #f4e3b9;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        word-break: break-word;
+    }
+
+    /* Estilo dos links no mobile */
+    .registros a {
+        display: block;
+        width: 100%;
+        padding: 8px 12px;
+        margin: 6px 0;
+        margin-right: 0;
+        font-size: 0.8rem;
+        text-align: center;
+        border-radius: 8px;
+    }
+
+    /* Wrapper de ações ocupa a largura total em mobile */
+    .acoes-wrapper {
+        grid-column: 1 / -1;
         flex-direction: column;
-        align-items: stretch;
+        gap: 8px;
+    }
+
+    .acoes-wrapper a {
+        flex: 1;
     }
 
     .table-responsive {
         margin: 0 -12px;
         padding: 0 12px;
+        overflow-x: visible;
     }
 
     .card.border-primary-subtle {

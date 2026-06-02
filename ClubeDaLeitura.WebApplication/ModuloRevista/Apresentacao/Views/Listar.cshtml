@@ -33,13 +33,13 @@ else
                 @foreach (ListarRevistasViewModel revista in Model)
                 {
                     <tr>
-                        <td>@revista.Id</td>
-                        <td>@revista.Titulo</td>
-                        <td>@revista.NumeroEdicao</td>
-                        <td>@revista.AnoPublicacao.Year</td>
-                        <td>@revista.CaixaEtiqueta</td>
-                        <td>@revista.Status</td>
-                        <td>
+                        <td data-label="ID">@revista.Id</td>
+                        <td data-label="Título">@revista.Titulo</td>
+                        <td data-label="Nº Edição">@revista.NumeroEdicao</td>
+                        <td data-label="Ano Publ.">@revista.AnoPublicacao.Year</td>
+                        <td data-label="Caixa">@revista.CaixaEtiqueta</td>
+                        <td data-label="Status">@revista.Status</td>
+                        <td data-label="Ações">
                             <div class="acoes-wrapper">
                                 <a asp-action="Editar" asp-route-id="@revista.Id">Editar</a>
                                 <a asp-action="Excluir" asp-route-id="@revista.Id">Excluir</a>

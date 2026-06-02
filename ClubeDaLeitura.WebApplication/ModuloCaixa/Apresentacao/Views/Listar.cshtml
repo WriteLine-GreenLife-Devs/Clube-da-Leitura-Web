@@ -32,11 +32,11 @@ else
                 @foreach (ListarCaixasViewModel c in Model)
                 {
                     <tr>
-                        <td>@c.Id</td>
-                        <td>@c.Etiqueta</td>
-                        <td>@c.Cor</td>
-                        <td>@c.DiasDeEmprestimo</td>
-                        <td>
+                        <td data-label="ID">@c.Id</td>
+                        <td data-label="Etiqueta">@c.Etiqueta</td>
+                        <td data-label="Cor">@c.Cor</td>
+                        <td data-label="Dias Empr.">@c.DiasDeEmprestimo</td>
+                        <td data-label="Ações">
                             <div class="acoes-wrapper">
                                 <a asp-action="Editar" asp-route-id="@c.Id">Editar</a>
                                 <a asp-action="Excluir" asp-route-id="@c.Id">Excluir</a>
